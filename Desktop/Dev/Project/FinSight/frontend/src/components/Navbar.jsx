@@ -28,7 +28,13 @@ const Navbar = () => {
           </NavLink>
         ))}
         <div className="flex items-center gap-3 ml-4 border-l pl-4">
-          <span className="text-xs text-gray-500">{user?.email}</span>
+          <NavLink to="/profile"
+            className={({ isActive }) =>
+              `text-sm font-medium transition ${isActive ? 'text-indigo-600' : 'text-gray-600 hover:text-indigo-600'}`
+            }
+          >
+            {user?.name || user?.email}
+          </NavLink>
           <button onClick={logout} className="text-sm text-red-400 hover:text-red-600 transition">
             Logout
           </button>

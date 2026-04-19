@@ -23,6 +23,8 @@ export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
   me: () => api.get('/auth/me'),
+  updateProfile: (data) => api.patch('/auth/me', data),
+  updatePassword: (data) => api.patch('/auth/me/password', data),
 };
 
 export const transactionsAPI = {
@@ -40,6 +42,7 @@ export const analyticsAPI = {
 export const budgetsAPI = {
   getAll: () => api.get('/budgets'),
   create: (data) => api.post('/budgets', data),
+  delete: (id) => api.delete(`/budgets/${id}`),
 };
 
 export const uploadAPI = {

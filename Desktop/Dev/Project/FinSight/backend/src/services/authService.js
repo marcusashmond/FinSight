@@ -25,4 +25,19 @@ const getMe = async (userId) => {
   return user;
 };
 
-module.exports = { register, login, getMe };
+const updateProfile = async (userId, { name }) => {
+  const user = await User.findByIdAndUpdate(userId, { name }, { new: true }).select('-passwordHash');
+  if (!user) throw Object.assign(new Error('User not found'), { status: 404 });
+  return user;
+};
+
+const updatePassword = async (userId, { currentPassword, newPassword }) => {
+  const user = await User.findById(userId);
+  if (!user || !(await user.comparePassword(currentPassword))) {
+    throw Object.assign(new Error('Current password is incorrect'), { status: 401 });
+  }
+  user.passwordHash = newPassword;
+  await user.save();
+};
+
+module.exports = { register, login, getMe, updateProfile, updatePassword };

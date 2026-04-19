@@ -4,7 +4,7 @@ const create = async (userId, data) => {
   return Transaction.create({ ...data, userId });
 };
 
-const getAll = async (userId, { startDate, endDate, category } = {}) => {
+const getAll = async (userId, { startDate, endDate, category, merchant } = {}) => {
   const query = { userId };
   if (startDate || endDate) {
     query.date = {};
@@ -12,6 +12,7 @@ const getAll = async (userId, { startDate, endDate, category } = {}) => {
     if (endDate) query.date.$lte = new Date(endDate);
   }
   if (category) query.category = category;
+  if (merchant) query.merchant = { $regex: merchant, $options: 'i' };
   return Transaction.find(query).sort({ date: -1 });
 };
 

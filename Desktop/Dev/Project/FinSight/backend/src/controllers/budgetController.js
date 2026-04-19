@@ -11,4 +11,11 @@ const getAll = async (req, res, next) => {
   try { res.json(await budgetService.getAll(req.userId)); } catch (err) { next(err); }
 };
 
-module.exports = { create, getAll };
+const remove = async (req, res, next) => {
+  try {
+    await budgetService.remove(req.userId, req.params.id);
+    res.json({ message: 'Budget deleted' });
+  } catch (err) { next(err); }
+};
+
+module.exports = { create, getAll, remove };

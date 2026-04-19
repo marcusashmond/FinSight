@@ -10,4 +10,9 @@ const create = async (userId, data) => {
 
 const getAll = async (userId) => Budget.find({ userId });
 
-module.exports = { create, getAll };
+const remove = async (userId, id) => {
+  const budget = await Budget.findOneAndDelete({ _id: id, userId });
+  if (!budget) throw Object.assign(new Error('Budget not found'), { status: 404 });
+};
+
+module.exports = { create, getAll, remove };
