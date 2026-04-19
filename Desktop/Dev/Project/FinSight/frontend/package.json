@@ -1,6 +1,7 @@
 {
   "name": "finsight-frontend",
   "version": "1.0.0",
+  "description": "React dashboard for FinSight — transaction management, budget tracking, and spending analytics",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

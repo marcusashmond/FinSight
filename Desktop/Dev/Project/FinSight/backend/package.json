@@ -1,6 +1,7 @@
 {
   "name": "finsight-backend",
   "version": "1.0.0",
+  "description": "REST API for FinSight — personal finance tracking with JWT auth, analytics, and budget management",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
