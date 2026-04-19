@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { budgetsAPI, analyticsAPI } from '../services/api';
 import useFetch from '../hooks/useFetch';
+import BudgetChart from '../components/BudgetChart';
 
 const CATEGORIES = ['Groceries', 'Transport', 'Dining', 'Shopping', 'Utilities', 'Health', 'Housing', 'Subscriptions', 'Other'];
 
@@ -63,6 +64,13 @@ const Budget = () => {
           </button>
         </form>
       </div>
+
+      {budgets?.length > 0 && (
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-4">
+          <h2 className="font-semibold text-lg mb-4">Budget vs Spending</h2>
+          <BudgetChart budgets={budgets} spendMap={spendMap} />
+        </div>
+      )}
 
       <div className="space-y-4">
         <h2 className="font-semibold text-lg">Your Budgets</h2>
