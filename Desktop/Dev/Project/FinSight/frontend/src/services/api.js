@@ -45,6 +45,12 @@ export const budgetsAPI = {
   delete: (id) => api.delete(`/budgets/${id}`),
 };
 
+export const subscriptionsAPI = {
+  getAll: () => api.get('/subscriptions'),
+  create: (data) => api.post('/subscriptions', data),
+  delete: (id) => api.delete(`/subscriptions/${id}`),
+};
+
 export const uploadAPI = {
   upload: (file) => {
     const form = new FormData();

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
@@ -8,6 +9,7 @@ import Budget from './pages/Budget';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
+import Recurring from './pages/Recurring';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -16,7 +18,7 @@ const PrivateRoute = ({ children }) => {
 };
 
 const AppLayout = ({ children }) => (
-  <div className="min-h-screen flex flex-col">
+  <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
     <Navbar />
     <main className="flex-1">{children}</main>
   </div>
@@ -33,6 +35,7 @@ const AppRoutes = () => {
       <Route path="/upload" element={<PrivateRoute><AppLayout><Upload /></AppLayout></PrivateRoute>} />
       <Route path="/budgets" element={<PrivateRoute><AppLayout><Budget /></AppLayout></PrivateRoute>} />
       <Route path="/profile" element={<PrivateRoute><AppLayout><Profile /></AppLayout></PrivateRoute>} />
+      <Route path="/recurring" element={<PrivateRoute><AppLayout><Recurring /></AppLayout></PrivateRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
@@ -40,9 +43,11 @@ const AppRoutes = () => {
 
 const App = () => (
   <BrowserRouter>
-    <AuthProvider>
-      <AppRoutes />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </ThemeProvider>
   </BrowserRouter>
 );
 
