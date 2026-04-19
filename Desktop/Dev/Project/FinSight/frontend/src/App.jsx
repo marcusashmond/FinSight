@@ -10,6 +10,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Recurring from './pages/Recurring';
+import NetWorth from './pages/NetWorth';
+import Goals from './pages/Goals';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -36,6 +38,8 @@ const AppRoutes = () => {
       <Route path="/budgets" element={<PrivateRoute><AppLayout><Budget /></AppLayout></PrivateRoute>} />
       <Route path="/profile" element={<PrivateRoute><AppLayout><Profile /></AppLayout></PrivateRoute>} />
       <Route path="/recurring" element={<PrivateRoute><AppLayout><Recurring /></AppLayout></PrivateRoute>} />
+      <Route path="/networth" element={<PrivateRoute><AppLayout><NetWorth /></AppLayout></PrivateRoute>} />
+      <Route path="/goals" element={<PrivateRoute><AppLayout><Goals /></AppLayout></PrivateRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

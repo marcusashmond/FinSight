@@ -37,12 +37,26 @@ export const analyticsAPI = {
   summary: () => api.get('/analytics/summary'),
   categories: () => api.get('/analytics/categories'),
   trends: () => api.get('/analytics/trends'),
+  insights: () => api.get('/analytics/insights'),
 };
 
 export const budgetsAPI = {
   getAll: () => api.get('/budgets'),
   create: (data) => api.post('/budgets', data),
   delete: (id) => api.delete(`/budgets/${id}`),
+};
+
+export const assetsAPI = {
+  getAll: () => api.get('/assets'),
+  create: (data) => api.post('/assets', data),
+  delete: (id) => api.delete(`/assets/${id}`),
+};
+
+export const goalsAPI = {
+  getAll: () => api.get('/goals'),
+  create: (data) => api.post('/goals', data),
+  update: (id, data) => api.patch(`/goals/${id}`, data),
+  delete: (id) => api.delete(`/goals/${id}`),
 };
 
 export const subscriptionsAPI = {

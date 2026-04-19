@@ -7,6 +7,8 @@ const links = [
   { to: '/transactions', label: 'Transactions' },
   { to: '/budgets', label: 'Budgets' },
   { to: '/recurring', label: 'Recurring' },
+  { to: '/networth', label: 'Net Worth' },
+  { to: '/goals', label: 'Goals' },
   { to: '/upload', label: 'Upload' },
 ];
 

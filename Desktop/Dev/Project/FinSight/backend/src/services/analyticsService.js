@@ -34,4 +34,35 @@ const trends = async (uid) => {
   ]);
 };
 
-module.exports = { summary, categories, trends };
+const insights = async (uid) => {
+  const now = new Date();
+  const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+  const [thisMonth, lastMonth] = await Promise.all([
+    Transaction.aggregate([
+      { $match: { userId: userId(uid), type: 'expense', date: { $gte: thisMonthStart } } },
+      { $group: { _id: '$category', total: { $sum: '$amount' } } },
+    ]),
+    Transaction.aggregate([
+      { $match: { userId: userId(uid), type: 'expense', date: { $gte: lastMonthStart, $lt: thisMonthStart } } },
+      { $group: { _id: '$category', total: { $sum: '$amount' } } },
+    ]),
+  ]);
+
+  const lastMap = {};
+  lastMonth.forEach((r) => { lastMap[r._id] = Math.abs(r.total); });
+
+  return thisMonth
+    .map((r) => {
+      const current = Math.abs(r.total);
+      const previous = lastMap[r._id] || 0;
+      const change = previous > 0 ? ((current - previous) / previous) * 100 : null;
+      return { category: r._id, current, previous, change };
+    })
+    .filter((r) => r.change !== null && Math.abs(r.change) >= 10)
+    .sort((a, b) => Math.abs(b.change) - Math.abs(a.change))
+    .slice(0, 4);
+};
+
+module.exports = { summary, categories, trends, insights };

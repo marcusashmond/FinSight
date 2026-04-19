@@ -12,6 +12,8 @@ const analyticsRoutes = require('./routes/analytics');
 const budgetRoutes = require('./routes/budgets');
 const uploadRoutes = require('./routes/upload');
 const subscriptionRoutes = require('./routes/subscriptions');
+const assetRoutes = require('./routes/assets');
+const goalRoutes = require('./routes/goals');
 
 connectDB();
 
@@ -30,6 +32,8 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/assets', assetRoutes);
+app.use('/api/goals', goalRoutes);
 
 app.use(errorHandler);
 
