@@ -2,11 +2,23 @@
   "name": "finsight-backend",
   "version": "1.0.0",
   "description": "REST API for FinSight — personal finance tracking with JWT auth, analytics, and budget management",
-  "main": "src/app.js",
+  "main": "src/server.js",
   "scripts": {
-    "start": "node src/app.js",
-    "dev": "nodemon src/app.js",
-    "test": "jest --detectOpenHandles"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest --detectOpenHandles --forceExit",
+    "test:unit": "jest --testPathPattern=__tests__/.*(?<!integration).test.js --detectOpenHandles",
+    "test:integration": "jest --testPathPattern=integration --detectOpenHandles --forceExit"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testTimeout": 120000,
+    "testMatch": [
+      "**/__tests__/**/*.test.js"
+    ],
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
+    ]
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -23,6 +35,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
+    "mongodb-memory-server": "^11.0.1",
     "nodemon": "^3.1.3",
     "supertest": "^7.0.0"
   }

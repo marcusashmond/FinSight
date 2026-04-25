@@ -15,9 +15,10 @@ const subscriptionRoutes = require('./routes/subscriptions');
 const assetRoutes = require('./routes/assets');
 const goalRoutes = require('./routes/goals');
 
-connectDB();
+if (process.env.NODE_ENV !== 'test') connectDB();
 
 const app = express();
+
 
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -46,8 +47,5 @@ app.use('/api/assets', assetRoutes);
 app.use('/api/goals', goalRoutes);
 
 app.use(errorHandler);
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`FinSight API running on port ${PORT}`));
 
 module.exports = app;
