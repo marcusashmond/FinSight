@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
@@ -22,7 +23,9 @@ const PrivateRoute = ({ children }) => {
 const AppLayout = ({ children }) => (
   <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
     <Navbar />
-    <main className="flex-1">{children}</main>
+    <main className="flex-1">
+      <ErrorBoundary>{children}</ErrorBoundary>
+    </main>
   </div>
 );
 

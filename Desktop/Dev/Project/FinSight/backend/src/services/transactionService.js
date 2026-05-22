@@ -4,7 +4,7 @@ const create = async (userId, data) => {
   return Transaction.create({ ...data, userId });
 };
 
-const getAll = async (userId, { startDate, endDate, category, merchant } = {}) => {
+const getAll = async (userId, { startDate, endDate, category, merchant, sortBy = 'date', sortOrder = 'desc', page = 1, limit = 20 } = {}) => {
   const query = { userId };
   if (startDate || endDate) {
     query.date = {};
@@ -13,7 +13,14 @@ const getAll = async (userId, { startDate, endDate, category, merchant } = {}) =
   }
   if (category) query.category = category;
   if (merchant) query.merchant = { $regex: merchant, $options: 'i' };
-  return Transaction.find(query).sort({ date: -1 });
+
+  const sort = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
+  const skip = (parseInt(page) - 1) * parseInt(limit);
+  const [transactions, total] = await Promise.all([
+    Transaction.find(query).sort(sort).skip(skip).limit(parseInt(limit)),
+    Transaction.countDocuments(query),
+  ]);
+  return { transactions, total, page: parseInt(page), pages: Math.ceil(total / parseInt(limit)) };
 };
 
 const getById = async (userId, id) => {
@@ -27,4 +34,14 @@ const remove = async (userId, id) => {
   if (!tx) throw Object.assign(new Error('Transaction not found'), { status: 404 });
 };
 
-module.exports = { create, getAll, getById, remove };
+const update = async (userId, id, data) => {
+  const tx = await Transaction.findOneAndUpdate(
+    { _id: id, userId },
+    data,
+    { new: true, runValidators: true }
+  );
+  if (!tx) throw Object.assign(new Error('Transaction not found'), { status: 404 });
+  return tx;
+};
+
+module.exports = { create, getAll, getById, update, remove };

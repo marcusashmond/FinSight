@@ -1,5 +1,7 @@
 # FinSight
 
+[![CI](https://github.com/marcusashmond/FinSight/actions/workflows/ci.yml/badge.svg)](https://github.com/marcusashmond/FinSight/actions/workflows/ci.yml)
+
 **Live Demo:** [fin-sight-beta-eosin.vercel.app](https://fin-sight-beta-eosin.vercel.app)
 
 A personal finance dashboard for tracking income, expenses, and budgets. Built with React, Node/Express, and MongoDB.

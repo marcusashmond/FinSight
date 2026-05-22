@@ -21,6 +21,13 @@ const getById = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+const update = async (req, res, next) => {
+  try {
+    const tx = await txService.update(req.userId, req.params.id, req.body);
+    res.json(tx);
+  } catch (err) { next(err); }
+};
+
 const remove = async (req, res, next) => {
   try {
     await txService.remove(req.userId, req.params.id);
@@ -28,4 +35,4 @@ const remove = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { create, getAll, getById, remove };
+module.exports = { create, getAll, getById, update, remove };

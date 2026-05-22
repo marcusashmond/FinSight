@@ -7,32 +7,40 @@ on:
     branches: [main]
 
 jobs:
-  backend:
+  backend-test:
+    name: Backend Tests
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: backend
+        working-directory: Desktop/Dev/Project/FinSight/backend
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
-          cache-dependency-path: backend/package-lock.json
-      - run: npm ci
-      - run: npm test --if-present
+          cache-dependency-path: Desktop/Dev/Project/FinSight/backend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Run unit tests
+        run: npm run test:unit
+      - name: Run integration tests
+        run: npm run test:integration
 
-  frontend:
+  frontend-build:
+    name: Frontend Build
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: frontend
+        working-directory: Desktop/Dev/Project/FinSight/frontend
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
-      - run: npm ci
-      - run: npm run build
+          cache-dependency-path: Desktop/Dev/Project/FinSight/frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
