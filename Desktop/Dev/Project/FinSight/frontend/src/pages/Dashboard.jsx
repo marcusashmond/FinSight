@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { analyticsAPI, transactionsAPI, seedAPI } from '../services/api';
+import { analyticsAPI, transactionsAPI, seedAPI, aiAPI } from '../services/api';
 import useFetch from '../hooks/useFetch';
 import SummaryCard from '../components/SummaryCard';
 import CategoryChart from '../components/CategoryChart';
@@ -129,6 +129,9 @@ const downloadReport = async () => {
 
 const Dashboard = () => {
   const [seeding, setSeeding] = useState(false);
+  const [aiInsights, setAiInsights] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
   const { data: summary, loading: sl } = useFetch(analyticsAPI.summary);
   const { data: categories, loading: cl } = useFetch(analyticsAPI.categories);
   const { data: trends, loading: tl } = useFetch(analyticsAPI.trends);
@@ -143,6 +146,20 @@ const Dashboard = () => {
       window.location.reload();
     } finally {
       setSeeding(false);
+    }
+  };
+
+  const fetchAiInsights = async () => {
+    setAiLoading(true);
+    setAiError('');
+    setAiInsights(null);
+    try {
+      const res = await aiAPI.insights();
+      setAiInsights(res.data.insights);
+    } catch (err) {
+      setAiError(err.response?.data?.message || 'Failed to load AI insights.');
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -213,6 +230,55 @@ const Dashboard = () => {
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6">
         <h2 className="font-semibold text-lg mb-4">Daily Spending — Past Year</h2>
         <SpendingHeatmap data={dailySpend} />
+      </div>
+
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="font-semibold text-lg">AI Financial Insights</h2>
+            <p className="text-sm text-gray-400 mt-0.5">Personalized advice based on your spending data</p>
+          </div>
+          <button
+            onClick={fetchAiInsights}
+            disabled={aiLoading}
+            className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 disabled:opacity-50 transition flex items-center gap-2"
+          >
+            {aiLoading ? (
+              <>
+                <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                </svg>
+                Analyzing...
+              </>
+            ) : (
+              <>✦ Get AI Insights</>
+            )}
+          </button>
+        </div>
+
+        {aiError && (
+          <p className="text-red-500 text-sm">{aiError}</p>
+        )}
+
+        {!aiInsights && !aiLoading && !aiError && (
+          <p className="text-sm text-gray-400">Click the button to get personalized insights from your spending data.</p>
+        )}
+
+        {aiInsights && (
+          <div className="prose prose-sm dark:prose-invert max-w-none text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+            {aiInsights.split('\n').map((line, i) => {
+              const formatted = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+              return (
+                <p
+                  key={i}
+                  className={line.trim() === '' ? 'mt-2' : 'mb-2'}
+                  dangerouslySetInnerHTML={{ __html: formatted }}
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
