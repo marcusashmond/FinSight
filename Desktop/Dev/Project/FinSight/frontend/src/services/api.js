@@ -71,10 +71,6 @@ export const seedAPI = {
   load: () => api.post('/seed'),
 };
 
-export const aiAPI = {
-  insights: () => api.post('/ai/insights'),
-};
-
 export const uploadAPI = {
   upload: (file) => {
     const form = new FormData();
