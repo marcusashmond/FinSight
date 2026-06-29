@@ -39,6 +39,7 @@ export const analyticsAPI = {
   categories: () => api.get('/analytics/categories'),
   trends: () => api.get('/analytics/trends'),
   insights: () => api.get('/analytics/insights'),
+  daily: () => api.get('/analytics/daily'),
 };
 
 export const budgetsAPI = {

@@ -16,4 +16,8 @@ const insights = async (req, res, next) => {
   try { res.json(await analyticsService.insights(req.userId)); } catch (err) { next(err); }
 };
 
-module.exports = { summary, categories, trends, insights };
+const daily = async (req, res, next) => {
+  try { res.json(await analyticsService.daily(req.userId)); } catch (err) { next(err); }
+};
+
+module.exports = { summary, categories, trends, insights, daily };

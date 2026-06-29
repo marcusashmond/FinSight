@@ -6,6 +6,7 @@ import SummaryCard from '../components/SummaryCard';
 import CategoryChart from '../components/CategoryChart';
 import TrendChart from '../components/TrendChart';
 import { DashboardSkeleton } from '../components/Skeleton';
+import SpendingHeatmap from '../components/SpendingHeatmap';
 
 const fmt = (n) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n ?? 0);
@@ -132,6 +133,7 @@ const Dashboard = () => {
   const { data: categories, loading: cl } = useFetch(analyticsAPI.categories);
   const { data: trends, loading: tl } = useFetch(analyticsAPI.trends);
   const { data: insights } = useFetch(analyticsAPI.insights);
+  const { data: dailySpend } = useFetch(analyticsAPI.daily);
 
   const loadDemoData = async () => {
     if (!window.confirm('This will replace all your current data with demo data. Continue?')) return;
@@ -206,6 +208,11 @@ const Dashboard = () => {
           <h2 className="font-semibold text-lg mb-4">Monthly Trends</h2>
           {tl ? <p className="text-gray-400">Loading...</p> : <TrendChart data={trends} />}
         </div>
+      </div>
+
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6">
+        <h2 className="font-semibold text-lg mb-4">Daily Spending — Past Year</h2>
+        <SpendingHeatmap data={dailySpend} />
       </div>
     </div>
   );

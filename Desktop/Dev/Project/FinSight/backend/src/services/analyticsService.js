@@ -65,4 +65,30 @@ const insights = async (uid) => {
     .slice(0, 4);
 };
 
-module.exports = { summary, categories, trends, insights };
+const daily = async (uid) => {
+  const since = new Date();
+  since.setFullYear(since.getFullYear() - 1);
+  since.setHours(0, 0, 0, 0);
+
+  const rows = await Transaction.aggregate([
+    { $match: { userId: userId(uid), type: 'expense', date: { $gte: since } } },
+    {
+      $group: {
+        _id: {
+          year:  { $year:  '$date' },
+          month: { $month: '$date' },
+          day:   { $dayOfMonth: '$date' },
+        },
+        total: { $sum: '$amount' },
+      },
+    },
+    { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } },
+  ]);
+
+  return rows.map((r) => ({
+    date: `${r._id.year}-${String(r._id.month).padStart(2, '0')}-${String(r._id.day).padStart(2, '0')}`,
+    total: Math.abs(r.total),
+  }));
+};
+
+module.exports = { summary, categories, trends, insights, daily };
