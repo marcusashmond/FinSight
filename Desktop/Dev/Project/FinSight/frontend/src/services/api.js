@@ -66,6 +66,10 @@ export const subscriptionsAPI = {
   delete: (id) => api.delete(`/subscriptions/${id}`),
 };
 
+export const seedAPI = {
+  load: () => api.post('/seed'),
+};
+
 export const uploadAPI = {
   upload: (file) => {
     const form = new FormData();

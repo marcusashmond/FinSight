@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { analyticsAPI, transactionsAPI } from '../services/api';
+import { analyticsAPI, transactionsAPI, seedAPI } from '../services/api';
 import useFetch from '../hooks/useFetch';
 import SummaryCard from '../components/SummaryCard';
 import CategoryChart from '../components/CategoryChart';
@@ -127,10 +127,22 @@ const downloadReport = async () => {
 };
 
 const Dashboard = () => {
+  const [seeding, setSeeding] = useState(false);
   const { data: summary, loading: sl } = useFetch(analyticsAPI.summary);
   const { data: categories, loading: cl } = useFetch(analyticsAPI.categories);
   const { data: trends, loading: tl } = useFetch(analyticsAPI.trends);
   const { data: insights } = useFetch(analyticsAPI.insights);
+
+  const loadDemoData = async () => {
+    if (!window.confirm('This will replace all your current data with demo data. Continue?')) return;
+    setSeeding(true);
+    try {
+      await seedAPI.load();
+      window.location.reload();
+    } finally {
+      setSeeding(false);
+    }
+  };
 
   if (sl && cl && tl) return <DashboardSkeleton />;
 
@@ -139,6 +151,12 @@ const Dashboard = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <div className="flex items-center gap-3">
+          <button
+            onClick={loadDemoData}
+            disabled={seeding}
+            className="border border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 transition">
+            {seeding ? 'Loading...' : 'Load Demo Data'}
+          </button>
           <button
             onClick={downloadReport}
             className="border border-indigo-600 text-indigo-600 px-4 py-2 rounded-lg text-sm hover:bg-indigo-50 dark:hover:bg-indigo-950 transition">

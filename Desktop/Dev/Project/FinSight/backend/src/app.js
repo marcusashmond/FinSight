@@ -14,6 +14,7 @@ const uploadRoutes = require('./routes/upload');
 const subscriptionRoutes = require('./routes/subscriptions');
 const assetRoutes = require('./routes/assets');
 const goalRoutes = require('./routes/goals');
+const seedRoutes = require('./routes/seed');
 
 if (process.env.NODE_ENV !== 'test') connectDB();
 
@@ -45,6 +46,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/assets', assetRoutes);
 app.use('/api/goals', goalRoutes);
+app.use('/api/seed', seedRoutes);
 
 app.use(errorHandler);
 
