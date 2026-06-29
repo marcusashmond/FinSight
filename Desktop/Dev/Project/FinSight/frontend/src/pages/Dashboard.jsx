@@ -98,6 +98,34 @@ const SearchBar = () => {
   );
 };
 
+const downloadReport = async () => {
+  const now = new Date();
+  const month = now.toLocaleString('default', { month: 'long', year: 'numeric' });
+  const [catRes, summaryRes] = await Promise.all([analyticsAPI.categories(), analyticsAPI.summary()]);
+  const categories = catRes.data || [];
+  const summary = summaryRes.data || {};
+
+  const lines = [
+    `FinSight Monthly Report — ${month}`,
+    '',
+    `Total Income,$${(summary.income ?? 0).toFixed(2)}`,
+    `Total Expenses,$${Math.abs(summary.expenses ?? 0).toFixed(2)}`,
+    `Net Balance,$${(summary.net ?? 0).toFixed(2)}`,
+    '',
+    'Category Breakdown',
+    'Category,Amount',
+    ...categories.map((c) => `${c._id},$${Math.abs(c.total).toFixed(2)}`),
+  ];
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `finsight-report-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
 const Dashboard = () => {
   const { data: summary, loading: sl } = useFetch(analyticsAPI.summary);
   const { data: categories, loading: cl } = useFetch(analyticsAPI.categories);
@@ -110,7 +138,14 @@ const Dashboard = () => {
     <div className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <h1 className="text-2xl font-bold">Dashboard</h1>
-        <SearchBar />
+        <div className="flex items-center gap-3">
+          <button
+            onClick={downloadReport}
+            className="border border-indigo-600 text-indigo-600 px-4 py-2 rounded-lg text-sm hover:bg-indigo-50 dark:hover:bg-indigo-950 transition">
+            Download Report
+          </button>
+          <SearchBar />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
