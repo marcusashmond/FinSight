@@ -142,11 +142,11 @@ const seed = async (userId) => {
   ]);
 
   await Subscription.insertMany([
-    { userId, name: 'Netflix',  amount: 15.99, billingCycle: 'monthly',  nextBillingDate: new Date(now.getFullYear(), now.getMonth() + 1, 5) },
-    { userId, name: 'Spotify',  amount: 9.99,  billingCycle: 'monthly',  nextBillingDate: new Date(now.getFullYear(), now.getMonth() + 1, 6) },
-    { userId, name: 'Adobe CC', amount: 54.99, billingCycle: 'monthly',  nextBillingDate: new Date(now.getFullYear(), now.getMonth() + 1, 7) },
-    { userId, name: 'Hulu',     amount: 17.99, billingCycle: 'monthly',  nextBillingDate: new Date(now.getFullYear(), now.getMonth() + 1, 8) },
-    { userId, name: 'iCloud+',  amount: 2.99,  billingCycle: 'monthly',  nextBillingDate: new Date(now.getFullYear(), now.getMonth() + 1, 1) },
+    { userId, merchant: 'Netflix',  amount: 15.99, frequency: 'monthly', lastCharged: new Date(now.getFullYear(), now.getMonth(), 5) },
+    { userId, merchant: 'Spotify',  amount: 9.99,  frequency: 'monthly', lastCharged: new Date(now.getFullYear(), now.getMonth(), 6) },
+    { userId, merchant: 'Adobe CC', amount: 54.99, frequency: 'monthly', lastCharged: new Date(now.getFullYear(), now.getMonth(), 7) },
+    { userId, merchant: 'Hulu',     amount: 17.99, frequency: 'monthly', lastCharged: new Date(now.getFullYear(), now.getMonth(), 8) },
+    { userId, merchant: 'iCloud+',  amount: 2.99,  frequency: 'monthly', lastCharged: new Date(now.getFullYear(), now.getMonth(), 1) },
   ]);
 
   await Asset.insertMany([
