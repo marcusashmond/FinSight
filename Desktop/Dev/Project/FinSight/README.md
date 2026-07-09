@@ -6,6 +6,12 @@
 
 A full-stack personal finance dashboard for tracking income, expenses, budgets, and net worth. Built with React, Node/Express, and MongoDB Atlas.
 
+## Screenshots
+
+![Dashboard](frontend/public/screenshot-dashboard.png)
+
+![Transactions](frontend/public/screenshot-transactions.png)
+
 ## Features
 
 - **Dashboard** — Income/expense summary cards, spending by category (pie chart), monthly trends (line chart), month-over-month spending insights, live transaction search, and CSV report download
