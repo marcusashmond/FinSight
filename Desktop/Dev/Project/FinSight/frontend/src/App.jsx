@@ -15,6 +15,7 @@ import NetWorth from './pages/NetWorth';
 import Goals from './pages/Goals';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import NotFound from './pages/NotFound';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -47,7 +48,7 @@ const AppRoutes = () => {
       <Route path="/recurring" element={<PrivateRoute><AppLayout><Recurring /></AppLayout></PrivateRoute>} />
       <Route path="/networth" element={<PrivateRoute><AppLayout><NetWorth /></AppLayout></PrivateRoute>} />
       <Route path="/goals" element={<PrivateRoute><AppLayout><Goals /></AppLayout></PrivateRoute>} />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
