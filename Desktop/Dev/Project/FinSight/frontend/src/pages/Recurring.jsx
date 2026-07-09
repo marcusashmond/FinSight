@@ -1,15 +1,38 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { subscriptionsAPI } from '../services/api';
 import useFetch from '../hooks/useFetch';
 
 const fmt = (n) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
 
+const nextDueDate = (sub) => {
+  if (!sub.lastCharged) return 'Due now';
+  const last = new Date(sub.lastCharged);
+  if (sub.frequency === 'weekly') last.setDate(last.getDate() + 7);
+  else if (sub.frequency === 'monthly') last.setMonth(last.getMonth() + 1);
+  else last.setFullYear(last.getFullYear() + 1);
+  return last.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+
 const Recurring = () => {
   const { data: subs, loading, refetch } = useFetch(subscriptionsAPI.getAll);
   const [form, setForm] = useState({ merchant: '', amount: '', frequency: 'monthly' });
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [syncBanner, setSyncBanner] = useState(null);
+
+  useEffect(() => {
+    const run = async () => {
+      try {
+        const res = await subscriptionsAPI.sync();
+        if (res.data.synced > 0) {
+          setSyncBanner(`${res.data.synced} subscription${res.data.synced > 1 ? 's' : ''} posted to transactions: ${res.data.merchants.join(', ')}`);
+          refetch();
+        }
+      } catch {}
+    };
+    run();
+  }, []);
 
   const monthlyTotal = subs?.reduce((acc, s) => {
     if (s.frequency === 'monthly') return acc + s.amount;
@@ -49,6 +72,13 @@ const Recurring = () => {
         </button>
       </div>
 
+      {syncBanner && (
+        <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-xl px-4 py-3 flex justify-between items-center">
+          <p className="text-green-700 dark:text-green-300 text-sm">{syncBanner}</p>
+          <button onClick={() => setSyncBanner(null)} className="text-green-400 hover:text-green-600 text-xs ml-4">✕</button>
+        </div>
+      )}
+
       <div className="bg-indigo-50 dark:bg-indigo-950 border border-indigo-200 dark:border-indigo-800 rounded-2xl p-4">
         <p className="text-sm text-indigo-600 dark:text-indigo-400 font-medium">Estimated monthly cost</p>
         <p className="text-3xl font-bold text-indigo-700 dark:text-indigo-300 mt-1">{fmt(monthlyTotal)}</p>
@@ -87,16 +117,16 @@ const Recurring = () => {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
             <tr>
-              {['Service', 'Amount', 'Frequency', 'Monthly Cost', ''].map((h) => (
+              {['Service', 'Amount', 'Frequency', 'Monthly Cost', 'Next Due', ''].map((h) => (
                 <th key={h} className="px-4 py-3 text-left font-medium text-gray-500">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody className="divide-y dark:divide-gray-700">
             {loading ? (
-              <tr><td colSpan={5} className="px-4 py-6 text-center text-gray-400">Loading...</td></tr>
+              <tr><td colSpan={6} className="px-4 py-6 text-center text-gray-400">Loading...</td></tr>
             ) : subs?.length === 0 ? (
-              <tr><td colSpan={5} className="px-4 py-6 text-center text-gray-400">No subscriptions tracked yet.</td></tr>
+              <tr><td colSpan={6} className="px-4 py-6 text-center text-gray-400">No subscriptions tracked yet.</td></tr>
             ) : subs?.map((s) => {
               const monthly = s.frequency === 'monthly' ? s.amount
                 : s.frequency === 'weekly' ? s.amount * 4
@@ -107,6 +137,7 @@ const Recurring = () => {
                   <td className="px-4 py-3">{fmt(s.amount)}</td>
                   <td className="px-4 py-3 capitalize">{s.frequency}</td>
                   <td className="px-4 py-3 text-indigo-600 dark:text-indigo-400 font-semibold">{fmt(monthly)}</td>
+                  <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-xs">{nextDueDate(s)}</td>
                   <td className="px-4 py-3">
                     <button onClick={() => handleDelete(s._id)} className="text-red-400 hover:text-red-600 text-xs">
                       Remove

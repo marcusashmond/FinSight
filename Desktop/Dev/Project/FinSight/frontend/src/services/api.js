@@ -67,6 +67,7 @@ export const subscriptionsAPI = {
   getAll: () => api.get('/subscriptions'),
   create: (data) => api.post('/subscriptions', data),
   delete: (id) => api.delete(`/subscriptions/${id}`),
+  sync: () => api.post('/subscriptions/sync'),
 };
 
 export const seedAPI = {
