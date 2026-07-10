@@ -49,4 +49,11 @@ const resetPassword = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { register, login, me, updateProfile, updatePassword, forgotPassword, resetPassword };
+const deleteAccount = async (req, res, next) => {
+  try {
+    await authService.deleteAccount(req.userId);
+    res.json({ message: 'Account deleted' });
+  } catch (err) { next(err); }
+};
+
+module.exports = { register, login, me, updateProfile, updatePassword, forgotPassword, resetPassword, deleteAccount };

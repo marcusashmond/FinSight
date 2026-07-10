@@ -27,6 +27,7 @@ export const authAPI = {
   updatePassword: (data) => api.patch('/auth/me/password', data),
   forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
   resetPassword: (token, password) => api.post(`/auth/reset-password/${token}`, { password }),
+  deleteAccount: () => api.delete('/auth/me'),
 };
 
 export const transactionsAPI = {

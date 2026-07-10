@@ -1,15 +1,19 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 
 const Profile = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [nameForm, setNameForm] = useState({ name: user?.name || '' });
   const [pwForm, setPwForm] = useState({ currentPassword: '', newPassword: '', confirm: '' });
   const [nameMsg, setNameMsg] = useState('');
   const [pwMsg, setPwMsg] = useState('');
   const [nameSaving, setNameSaving] = useState(false);
   const [pwSaving, setPwSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [showDelConfirm, setShowDelConfirm] = useState(false);
 
   const handleName = async (e) => {
     e.preventDefault();
@@ -41,20 +45,32 @@ const Profile = () => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await authAPI.deleteAccount();
+      localStorage.removeItem('token');
+      navigate('/register');
+    } catch {
+      setDeleting(false);
+      setShowDelConfirm(false);
+    }
+  };
+
   return (
     <div className="p-6 max-w-lg space-y-6">
       <h1 className="text-2xl font-bold">Profile</h1>
 
-      <div className="bg-white rounded-2xl shadow p-6 space-y-3">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6 space-y-3">
         <h2 className="font-semibold text-lg">Account Info</h2>
-        <p className="text-sm text-gray-500">Email: <span className="text-gray-800">{user?.email}</span></p>
+        <p className="text-sm text-gray-500">Email: <span className="text-gray-800 dark:text-gray-200">{user?.email}</span></p>
         <form onSubmit={handleName} className="space-y-3 pt-2">
           <div>
             <label className="block text-sm font-medium mb-1">Display Name</label>
             <input
               type="text"
               required
-              className="w-full border rounded-lg px-3 py-2 text-sm"
+              className="w-full border dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm"
               value={nameForm.name}
               onChange={(e) => setNameForm({ name: e.target.value })}
             />
@@ -69,7 +85,7 @@ const Profile = () => {
         </form>
       </div>
 
-      <div className="bg-white rounded-2xl shadow p-6 space-y-3">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6 space-y-3">
         <h2 className="font-semibold text-lg">Change Password</h2>
         <form onSubmit={handlePassword} className="space-y-3">
           {['currentPassword', 'newPassword', 'confirm'].map((field) => (
@@ -80,7 +96,7 @@ const Profile = () => {
               <input
                 type="password"
                 required
-                className="w-full border rounded-lg px-3 py-2 text-sm"
+                className="w-full border dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm"
                 value={pwForm[field]}
                 onChange={(e) => setPwForm({ ...pwForm, [field]: e.target.value })}
               />
@@ -96,12 +112,45 @@ const Profile = () => {
         </form>
       </div>
 
-      <div className="bg-white rounded-2xl shadow p-6">
-        <h2 className="font-semibold text-lg mb-3">Danger Zone</h2>
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6 space-y-4">
+        <h2 className="font-semibold text-lg">Danger Zone</h2>
         <button onClick={logout}
-          className="border border-red-400 text-red-500 px-4 py-2 rounded-lg text-sm hover:bg-red-50 transition">
+          className="border border-red-400 text-red-500 px-4 py-2 rounded-lg text-sm hover:bg-red-50 dark:hover:bg-red-950 transition">
           Sign Out
         </button>
+
+        {!showDelConfirm ? (
+          <div>
+            <button
+              onClick={() => setShowDelConfirm(true)}
+              className="block border border-red-600 text-red-600 px-4 py-2 rounded-lg text-sm hover:bg-red-50 dark:hover:bg-red-950 transition"
+            >
+              Delete Account
+            </button>
+            <p className="text-xs text-gray-400 mt-1">Permanently deletes your account and all data.</p>
+          </div>
+        ) : (
+          <div className="border border-red-300 dark:border-red-800 rounded-xl p-4 space-y-3 bg-red-50 dark:bg-red-950">
+            <p className="text-sm font-medium text-red-700 dark:text-red-300">
+              This will permanently delete your account and all transactions, budgets, goals, and subscriptions. This cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={handleDeleteAccount}
+                disabled={deleting}
+                className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 disabled:opacity-50 transition"
+              >
+                {deleting ? 'Deleting...' : 'Yes, delete my account'}
+              </button>
+              <button
+                onClick={() => setShowDelConfirm(false)}
+                className="border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ const router = require('express').Router();
 const Joi = require('joi');
 const validate = require('../middleware/validate');
 const protect = require('../middleware/auth');
-const { register, login, me, updateProfile, updatePassword, forgotPassword, resetPassword } = require('../controllers/authController');
+const { register, login, me, updateProfile, updatePassword, forgotPassword, resetPassword, deleteAccount } = require('../controllers/authController');
 
 const registerSchema = Joi.object({
   name: Joi.string().min(1).required(),
@@ -34,5 +34,6 @@ router.patch('/me', protect, validate(updateProfileSchema), updateProfile);
 router.patch('/me/password', protect, validate(updatePasswordSchema), updatePassword);
 router.post('/forgot-password', validate(forgotSchema), forgotPassword);
 router.post('/reset-password/:token', validate(resetSchema), resetPassword);
+router.delete('/me', protect, deleteAccount);
 
 module.exports = router;

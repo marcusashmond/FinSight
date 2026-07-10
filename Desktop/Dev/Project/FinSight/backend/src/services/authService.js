@@ -2,6 +2,11 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const User = require('../models/User');
+const Transaction = require('../models/Transaction');
+const Budget = require('../models/Budget');
+const Goal = require('../models/Goal');
+const Subscription = require('../models/Subscription');
+const Asset = require('../models/Asset');
 
 const sendResetEmail = async (email, token) => {
   const transporter = nodemailer.createTransport({
@@ -85,4 +90,15 @@ const resetPassword = async (token, newPassword) => {
   await user.save();
 };
 
-module.exports = { register, login, getMe, updateProfile, updatePassword, forgotPassword, resetPassword };
+const deleteAccount = async (userId) => {
+  await Promise.all([
+    Transaction.deleteMany({ user: userId }),
+    Budget.deleteMany({ user: userId }),
+    Goal.deleteMany({ user: userId }),
+    Subscription.deleteMany({ user: userId }),
+    Asset.deleteMany({ user: userId }),
+  ]);
+  await User.findByIdAndDelete(userId);
+};
+
+module.exports = { register, login, getMe, updateProfile, updatePassword, forgotPassword, resetPassword, deleteAccount };
