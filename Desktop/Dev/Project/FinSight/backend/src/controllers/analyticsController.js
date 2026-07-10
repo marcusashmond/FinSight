@@ -20,4 +20,8 @@ const daily = async (req, res, next) => {
   try { res.json(await analyticsService.daily(req.userId)); } catch (err) { next(err); }
 };
 
-module.exports = { summary, categories, trends, insights, daily };
+const merchants = async (req, res, next) => {
+  try { res.json(await analyticsService.merchants(req.userId)); } catch (err) { next(err); }
+};
+
+module.exports = { summary, categories, trends, insights, daily, merchants };

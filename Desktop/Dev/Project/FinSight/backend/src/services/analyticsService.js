@@ -91,4 +91,14 @@ const daily = async (uid) => {
   }));
 };
 
-module.exports = { summary, categories, trends, insights, daily };
+const merchants = async (uid) => {
+  const rows = await Transaction.aggregate([
+    { $match: { userId: userId(uid), type: 'expense' } },
+    { $group: { _id: '$merchant', total: { $sum: '$amount' } } },
+    { $sort: { total: 1 } },
+    { $limit: 8 },
+  ]);
+  return rows.map((r) => ({ merchant: r._id, total: Math.abs(r.total) }));
+};
+
+module.exports = { summary, categories, trends, insights, daily, merchants };

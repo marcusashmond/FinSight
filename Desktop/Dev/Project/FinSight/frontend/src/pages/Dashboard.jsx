@@ -134,6 +134,7 @@ const Dashboard = () => {
   const { data: trends, loading: tl } = useFetch(analyticsAPI.trends);
   const { data: insights } = useFetch(analyticsAPI.insights);
   const { data: dailySpend } = useFetch(analyticsAPI.daily);
+  const { data: topMerchants } = useFetch(analyticsAPI.merchants);
 
   const loadDemoData = async () => {
     if (!window.confirm('This will replace all your current data with demo data. Continue?')) return;
@@ -209,6 +210,31 @@ if (sl && cl && tl) return <DashboardSkeleton />;
           {tl ? <p className="text-gray-400">Loading...</p> : <TrendChart data={trends} />}
         </div>
       </div>
+
+      {topMerchants?.length > 0 && (
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6">
+          <h2 className="font-semibold text-lg mb-4">Top Merchants</h2>
+          <div className="space-y-3">
+            {topMerchants.map((m, i) => {
+              const max = topMerchants[0].total;
+              const pct = Math.round((m.total / max) * 100);
+              return (
+                <div key={m.merchant} className="flex items-center gap-3">
+                  <span className="text-xs text-gray-400 w-4 text-right">{i + 1}</span>
+                  <span className="text-sm font-medium w-32 truncate">{m.merchant}</span>
+                  <div className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-2">
+                    <div
+                      className="bg-indigo-500 h-2 rounded-full"
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                  <span className="text-sm font-semibold text-right w-20">{fmt(m.total)}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6">
         <h2 className="font-semibold text-lg mb-4">Daily Spending — Past Year</h2>

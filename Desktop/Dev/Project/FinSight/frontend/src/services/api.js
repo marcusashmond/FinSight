@@ -43,6 +43,7 @@ export const analyticsAPI = {
   trends: () => api.get('/analytics/trends'),
   insights: () => api.get('/analytics/insights'),
   daily: () => api.get('/analytics/daily'),
+  merchants: () => api.get('/analytics/merchants'),
 };
 
 export const budgetsAPI = {
